@@ -1,27 +1,21 @@
 {
-  "spider": "./lib/drpy2.min.js",
+  "spider": "https://raw.githubusercontent.com/Khong-Bi/AVBOX/main/lib/drpy2.min.js",
   "sites": [
     {
       "key": "51md",
-      "name": "51麻豆 | AVBOX",
+      "name": "51麻豆",
       "type": 3,
-      "api": "./lib/drpy2.min.js",
-      "ext": "./js/51md.js",
+      "api": "https://raw.githubusercontent.com/Khong-Bi/AVBOX/main/lib/drpy2.min.js",
+      "ext": "https://raw.githubusercontent.com/Khong-Bi/AVBOX/main/js/51md.js",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 1
     }
   ],
-  "parses": [
-    {"name": "并发","type": 2,"url": "Parallel"},
-    {"name": "轮询","type": 2,"url": "Sequence"}
-  ],
+  "parses": [],
   "rules": [
-    {"host": "51md.me","rule": ["cdn","m3u8","mp4"]},
+    {"host": "51md","rule": ["m3u8","cdn"]},
     {"host": "*","rule": ["m3u8"]}
   ],
-  "flags": ["m3u8","mp4","md","51md"],
-  "ijk": [
-    {"group": "软解码","options": [{"category": 4,"name": "opensles","value": "0"}]}
-  ]
+  "flags": ["m3u8","mp4"]
 }
