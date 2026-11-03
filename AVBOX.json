@@ -1,32 +1,36 @@
 {
-  "蜘蛛": "",
+  "spider": "",
   "壁纸": "",
   "sites": [
     {
-      "key": "91md",
-      "name": "91麻豆",
-      "type": 1,
+      "键": "91md_xml",
+      "名称": "91麻豆",
+      "类型": 0,
+      "api": "http://91md.me/api.php/provide/vod/at/xml/",
+      "可搜索": 1,
+      "快速搜索": 1,
+      "可过滤": 1,
+      "样式": {
+        "类型": "rect",
+        "比率": 1.33
+      }
+    },
+    {
+      "键": "91md_json",
+      "名称": "91麻豆(JSON)",
+      "类型": 1,
       "api": "http://91md.me/api.php/provide/vod/",
       "可搜索": 1,
       "快速搜索": 1,
       "可过滤": 1,
-      "style": {
-        "type": "rect",
-        "ratio": 1.33
+      "样式": {
+        "类型": "rect",
+        "比率": 1.33
       },
       "页眉": {
         "用户代理": "Mozilla/5.0(Windows NT10.0；Win64；x64)AppleWebKit/537.36(KHTML，如Gecko)Chrome/117.0.0.0 Safari/537.36",
         "接受": "应用程序/json，文本/普通，*/*"
       }
-    },
-    {
-      "key": "naixue",
-      "name": "奶酪秒播",
-      "type": 1,
-      "api": "https://caiji.naixuezy.com/api.php/provide/vod/",
-      "可搜索": 1,
-      "快速搜索": 1,
-      "可过滤": 1
     }
   ],
   "分析": [],
