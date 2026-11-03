@@ -4,13 +4,13 @@
   "sites": [
     {
       "key": "91md_web",
-      "name": "AVBOX",
+      "name": "91麻豆",
       "type": 3,
       "api": "csp_Builtin",
       "searchable": 0,
       "quickSearch": 0,
       "filterable": 0,
-      "homePage": "https://raw.githubusercontent.com/Khong-Bi/AVBOX/main/91md.html?t=1103g"
+      "homePage": "https://htmlpreview.github.io/?https://raw.githubusercontent.com/Khong-Bi/AVBOX/main/91md.html"
     }
   ],
   "parses": [],
