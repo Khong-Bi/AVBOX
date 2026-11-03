@@ -1,13 +1,29 @@
 {
   "sites": [
     {
-      "key": "51md",
-      "name": "51麻豆",
-      "type": 3,
-      "api": "https://raw.githubusercontent.com/Khong-Bi/AVBOX/main/lib/51md.py",
-      "ext": "https://51md.me",
+      "key": "csp_51md",
+      "name": "51麻豆[直连]",
+      "type": 1,
+      "api": "https://51md.me/api.php/provide/vod/at/json",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "categories": ["麻豆原创","天美传媒","蜜桃传媒","91制片厂","精东影业","海角社区","杏吧原创","糖心Vlog"]
+    },
+    {
+      "key": "csp_51md_cfd",
+      "name": "51麻豆[备用]",
+      "type": 1,
+      "api": "https://51md.cfd/api.php/provide/vod/at/json",
       "searchable": 1,
       "quickSearch": 1
     }
+  ],
+  "parses": [
+    {"name": "嗅探","type": 0,"url": ""}
+  ],
+  "flags": ["youku","qq","iqiyi","m3u8","mp4","51md","md"],
+  "ijk": [
+    {"group": "软解码","options": [{"category": 4,"name": "opensles","value": "0"},{"category": 4,"name": "overlay-format","value": "842225234"},{"category": 4,"name": "framedrop","value": "1"},{"category": 4,"name": "start-on-prepared","value": "1"},{"category": 1,"name": "http-detect-range-support","value": "0"},{"category": 1,"name": "fflags","value": "fastseek"}]}
   ]
 }
