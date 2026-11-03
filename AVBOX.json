@@ -7,7 +7,25 @@
       "api": "https://91md.me/api.php/provide/vod/",
       "searchable": 1,
       "quickSearch": 1,
-      "filterable": 1
+      "changeable": 1,
+      "filterable": 1,
+      "hide": 0,
+      "indexs": 0,
+      "timeout": 30,
+      "header": {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36"
+      }
     }
-  ]
+  ],
+  "parses": [],
+  "lives": [],
+  "flags": [],
+  "doh": [],
+  "proxy": [],
+  "hosts": [],
+  "headers": [],
+  "rules": [],
+  "ads": [],
+  "home": "91md",
+  "parse": ""
 }
