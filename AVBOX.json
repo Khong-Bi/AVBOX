@@ -3,28 +3,16 @@
     {
       "key": "51md",
       "name": "51麻豆",
-      "type": 2,
-      "api": "https://51md.me/api.php/provide/vod/",
-      "searchable": 1,
+      "type": 0,
+      "api": "https://51md.me/api.php/provide/vod/at/xml/",
+      "searchable": 2,
       "quickSearch": 1,
-      "changeable": 1,
-      "hide": 0,
-      "indexs": 0,
-      "timeout": 30,
-      "header": {
-        "User-Agent": "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36"
-      }
+      "filterable": 1
     }
   ],
-  "parses": [],
   "lives": [],
+  "parses": [],
   "flags": [],
-  "doh": [],
-  "proxy": [],
-  "hosts": [],
-  "headers": [],
-  "rules": [],
-  "ads": [],
-  "home": "51md",
-  "parse": ""
+  "ijk": [],
+  "ads": []
 }
