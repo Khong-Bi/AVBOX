@@ -1,10 +1,10 @@
 {
   "sites": [
     {
-      "key": "91md",
-      "name": "91麻豆",
+      "key": "51md",
+      "name": "51麻豆",
       "type": 2,
-      "api": "https://91md.me/api.php/provide/vod/?ac=list",
+      "api": "https://51md.me/api.php/provide/vod/",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 1,
@@ -25,6 +25,6 @@
   "headers": [],
   "rules": [],
   "ads": [],
-  "home": "91md",
+  "home": "51md",
   "parse": ""
 }
