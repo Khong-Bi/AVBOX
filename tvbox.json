@@ -1,17 +1,13 @@
 {
-  "spider": "https://raw.githubusercontent.com/Khong-Bi/AVBOX/main/lib/51md.py;md5;abc123",
   "sites": [
     {
-      "key": "51md_py",
+      "key": "51md",
       "name": "51麻豆",
       "type": 3,
       "api": "https://raw.githubusercontent.com/Khong-Bi/AVBOX/main/lib/51md.py",
       "ext": "https://51md.me",
       "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 0
+      "quickSearch": 1
     }
-  ],
-  "parses": [],
-  "flags": ["m3u8","mp4"]
+  ]
 }
