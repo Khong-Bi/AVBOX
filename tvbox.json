@@ -1,29 +1,25 @@
 {
   "sites": [
     {
-      "key": "csp_51md",
-      "name": "51麻豆[直连]",
-      "type": 1,
-      "api": "https://51md.me/api.php/provide/vod/at/json",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "categories": ["麻豆原创","天美传媒","蜜桃传媒","91制片厂","精东影业","海角社区","杏吧原创","糖心Vlog"]
-    },
-    {
-      "key": "csp_51md_cfd",
-      "name": "51麻豆[备用]",
-      "type": 1,
-      "api": "https://51md.cfd/api.php/provide/vod/at/json",
+      "key": "51md_js",
+      "name": "51麻豆[高天]",
+      "type": 3,
+      "api": "https://raw.githubusercontent.com/gaotianliuyun/gao/master/lib/drpy2.min.js",
+      "ext": "https://raw.githubusercontent.com/gaotianliuyun/gao/master/js/51md.js",
       "searchable": 1,
       "quickSearch": 1
+    },
+    {
+      "key": "R18_all",
+      "name": "R18聚合[饭太硬]",
+      "type": 3,
+      "api": "https://raw.githubusercontent.com/FongMi/CatVodSpider/main/lib/drpy2.min.js",
+      "ext": "https://raw.githubusercontent.com/gaotianliuyun/gao/master/js/18av.json",
+      "searchable": 1
     }
   ],
-  "parses": [
-    {"name": "嗅探","type": 0,"url": ""}
-  ],
-  "flags": ["youku","qq","iqiyi","m3u8","mp4","51md","md"],
-  "ijk": [
-    {"group": "软解码","options": [{"category": 4,"name": "opensles","value": "0"},{"category": 4,"name": "overlay-format","value": "842225234"},{"category": 4,"name": "framedrop","value": "1"},{"category": 4,"name": "start-on-prepared","value": "1"},{"category": 1,"name": "http-detect-range-support","value": "0"},{"category": 1,"name": "fflags","value": "fastseek"}]}
+  "parses": [],
+  "rules": [
+    {"host": "*","rule": ["m3u8","mp4"]}
   ]
 }
