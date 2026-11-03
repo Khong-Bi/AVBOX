@@ -1,1 +1,36 @@
-
+var rule = {
+    title:'51麻豆',
+    host:'https://51md.me',
+    headers:{'User-Agent':'Mozilla/5.0 Chrome/120','Referer':'https://51md.me'},
+    class_name:'麻豆原创&天美传媒&蜜桃传媒&91制片厂&精东影业&海角&杏吧&糖心',
+    class_url:'1&2&3&4&5&6&7&8',
+    推荐:'.col-sm-6.col-md-5.col-lg-4;h3 a&&Text;a&&href;.lazyload&&data-original;.sub-title&&Text',
+    一级:'.col-sm-6.col-md-5.col-lg-4;h3 a&&Text;a&&href;.lazyload&&data-original;.sub-title&&Text',
+    二级:{
+        title:'h1文本(&&T)',
+        IMG:'.vod-img img&&data-original',
+        DESC:'；.data li:eq(1)&&Text；.data li:eq(2)&&Text',
+        内容:'.内容和文本',
+        选项卡:'.playlist a',
+        列表:现在,我们可以在这个地方做些什么?,
+    },
+    搜索:'.col-sm-6.col-md-5.col-lg-4;h3 a&&Text;a&&href;.lazyload&&data-original;.sub-title&&Text',
+    搜索url:'/vod-search/wd/{wd}/page/{pg}',
+    可搜索的:2,
+    QuickSearch:1,
+    可过滤的:0,
+    懒惰的: $js.function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function function toString() { [native code] }() { [native 代码] }() { [native code] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }() { [native 代码] }(() => {
+        让 html = 请求(input);
+        让 m = html.match(/"url":"(https.*?m3u8)"/);
+        if(m){ input = m[1].replace(/\\/g,''); }
+        else{
+            让 ifr = pdfh(html,'iframe&&src');
+            if(ifr){ 
+              让 h2 = 请求(ifr);
+              让 m2 = h2.match(/(https.*？\.m3u8)/);
+              if(m2) input = m2[1];
+            }
+        }
+        input = {parse:0,url:input}
+    }),
+  }
