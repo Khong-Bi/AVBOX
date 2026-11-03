@@ -5,138 +5,176 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>91麻豆</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #111; color: #eee; font-family: system-ui, sans-serif; padding: 12px; }
-  h1 { font-size: 20px; margin-bottom: 12px; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-  .tab { background: #333; color: #ccc; border: none; padding: 8px 14px; border-radius: 20px; font-size: 14px; }
-  .tab.active { background: #e91e63; color: #fff; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-  .card { background: #1a1a1a; border-radius: 8px; overflow: hidden; }
-  .card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; background: #222; display: block; }
-  .card .title { font-size: 13px; padding: 8px; line-height: 1.3; height: 52px; overflow: hidden; }
-  .loading, .error { text-align: center; padding: 40px; color: #888; }
-  .more { display: block; width: 100%; margin: 20px 0; padding: 12px; background: #333; color: #fff; border: none; border-radius: 8px; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#111;color:#eee;font-family:system-ui,sans-serif;padding:12px;padding-bottom:40px}
+  h1{font-size:18px;margin-bottom:10px}
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .tab{background:#2a2a2a;color:#bbb;border:none;padding:7px 12px;border-radius:16px;font-size:13px}
+  .tab.active{background:#e91e63;color:#fff}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+  .card{background:#1c1c1c;border-radius:8px;overflow:hidden}
+  .card img{width:100%;aspect-ratio:3/4;object-fit:cover;background:#222;display:block}
+  .card .t{font-size:12px;padding:6px 8px;line-height:1.3;height:48px;overflow:hidden}
+  .msg{text-align:center;padding:30px 10px;color:#999;font-size:14px;word-break:break-all}
+  .more{display:none;width:100%;margin:16px 0;padding:12px;background:#333;color:#fff;border:none;border-radius:8px}
+  .debug{font-size:11px;color:#666;margin-top:8px;white-space:pre-wrap}
 </style>
 </head>
 <body>
   <h1>91麻豆</h1>
   <div class="tabs" id="tabs"></div>
-  <div id="content" class="loading">加载中...</div>
-  <button class="more" id="more" style="display:none">加载更多</button>
+  <div id="box"><div class="msg">正在加载...</div></div>
+  <button class="more" id="more">加载更多</button>
 
 <script>
-const API = "http://91md.me/api.php/provide/vod/";
-let currentType = 0;
-let page = 1;
-let loading = false;
+(function(){
+  const APIS = [
+    "http://91md.me/api.php/provide/vod/",
+    "https://91md.me/api.php/provide/vod/"
+  ];
+  let API = APIS[0];
+  let typeId = "";
+  let page = 1;
+  let busy = false;
 
-async function get(url) {
-  // 优先用 WebHomeTV 的原生请求（可绕过部分限制）
-  if (window.fm && fm.req) {
-    try {
-      const res = await fm.req({ url, method: "GET" });
-      return typeof res === "string" ? JSON.parse(res) : res;
-    } catch (e) {}
+  function $(id){ return document.getElementById(id); }
+
+  async function request(url){
+    // 1. 优先用 WebHomeTV 原生请求
+    if (window.fm && typeof fm.req === "function"){
+      try{
+        const r = await fm.req({url: url, method: "GET", headers: {"User-Agent":"Mozilla/5.0"}});
+        if (typeof r === "string") return JSON.parse(r);
+        if (r && r.data) return typeof r.data === "string" ? JSON.parse(r.data) : r.data;
+        return r;
+      }catch(e){}
+    }
+    // 2. 普通 fetch
+    const res = await fetch(url, {headers:{"User-Agent":"Mozilla/5.0"}});
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return res.json();
   }
-  const r = await fetch(url);
-  return r.json();
-}
 
-async function loadClass() {
-  try {
-    const data = await get(API + "?ac=list");
-    const classes = data.class || [];
-    const tabs = document.getElementById("tabs");
-    tabs.innerHTML = `<button class="tab active" data-id="0">最新</button>` +
-      classes.map(c => `<button class="tab" data-id="\( {c.type_id}"> \){c.type_name}</button>`).join("");
-    tabs.onclick = e => {
-      if (e.target.classList.contains("tab")) {
-        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-        e.target.classList.add("active");
-        currentType = e.target.dataset.id;
-        page = 1;
-        loadList(true);
+  async function loadClass(){
+    let lastErr = "";
+    for (const base of APIS){
+      try{
+        const data = await request(base + "?ac=list");
+        if (data && data.class && data.class.length){
+          API = base;
+          const tabs = $("tabs");
+          let html = '<button class="tab active" data-id="">最新</button>';
+          data.class.forEach(c=>{
+            html += `<button class="tab" data-id="\( {c.type_id}"> \){c.type_name}</button>`;
+          });
+          tabs.innerHTML = html;
+          tabs.onclick = function(e){
+            const btn = e.target.closest(".tab");
+            if (!btn) return;
+            tabs.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+            btn.classList.add("active");
+            typeId = btn.getAttribute("data-id") || "";
+            page = 1;
+            loadList(true);
+          };
+          return true;
+        }
+      }catch(e){
+        lastErr = e.message || String(e);
       }
-    };
-  } catch (e) {
-    document.getElementById("content").innerHTML = `<div class="error">分类加载失败<br>${e.message}</div>`;
+    }
+    \( ("box").innerHTML = `<div class="msg">分类加载失败<br> \){lastErr}<div class="debug">API: ${APIS.join(" | ")}</div></div>`;
+    return false;
   }
-}
 
-async function loadList(reset) {
-  if (loading) return;
-  loading = true;
-  const content = document.getElementById("content");
-  if (reset) content.innerHTML = `<div class="loading">加载中...</div>`;
+  async function loadList(reset){
+    if (busy) return;
+    busy = true;
+    if (reset) $("box").innerHTML = `<div class="msg">加载中...</div>`;
 
-  try {
-    let url = API + `?ac=videolist&pg=${page}`;
-    if (currentType && currentType != 0) url += `&t=${currentType}`;
-    const data = await get(url);
-    const list = data.list || [];
-    if (reset) content.innerHTML = "";
-    if (!list.length) {
-      content.innerHTML = `<div class="error">没有内容</div>`;
-      document.getElementById("more").style.display = "none";
-      return;
+    try{
+      let url = API + "?ac=videolist&pg=" + page;
+      if (typeId) url += "&t=" + typeId;
+
+      const data = await request(url);
+      const list = (data && data.list) ? data.list : [];
+
+      if (!list.length){
+        $("box").innerHTML = `<div class="msg">没有内容<br><div class="debug">url: ${url}\ncode: ${data && data.code}\nmsg: ${data && data.msg}\ntotal: ${data && data.total}</div></div>`;
+        $("more").style.display = "none";
+        return;
+      }
+
+      let grid = $("box").querySelector(".grid");
+      if (reset || !grid){
+        $("box").innerHTML = `<div class="grid"></div>`;
+        grid = $("box").querySelector(".grid");
+      }
+
+      list.forEach(v=>{
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <img src="${v.vod_pic || ""}" loading="lazy" onerror="this.style.opacity=0.3">
+          <div class="t">${v.vod_name || "未知"}</div>`;
+        div.onclick = function(){ play(v.vod_id, v.vod_name); };
+        grid.appendChild(div);
+      });
+
+      $("more").style.display = "block";
+      page++;
+    }catch(e){
+      \( ("box").innerHTML = `<div class="msg">请求失败<br> \){e.message || e}<div class="debug">当前API: ${API}</div></div>`;
+    }finally{
+      busy = false;
     }
-    const html = list.map(v => {
-      const pic = v.vod_pic || "";
-      const name = v.vod_name || "未知";
-      const id = v.vod_id;
-      return `<div class="card" data-id="${id}">
-        <img src="${pic}" loading="lazy" onerror="this.style.background='#333'">
-        <div class="title">${name}</div>
-      </div>`;
-    }).join("");
-    if (reset) content.innerHTML = `<div class="grid">${html}</div>`;
-    else content.querySelector(".grid").insertAdjacentHTML("beforeend", html);
-
-    content.querySelectorAll(".card").forEach(card => {
-      card.onclick = () => play(card.dataset.id);
-    });
-    document.getElementById("more").style.display = "block";
-    page++;
-  } catch (e) {
-    content.innerHTML = `<div class="error">加载失败<br>${e.message}<br>请确认网络能访问 91md.me</div>`;
-  } finally {
-    loading = false;
   }
-}
 
-async function play(id) {
-  try {
-    const data = await get(API + `?ac=videolist&ids=${id}`);
-    const vod = (data.list && data.list[0]) || {};
-    const playFrom = (vod.vod_play_from || "").split("$$$")[0];
-    const playUrl = (vod.vod_play_url || "").split("$$$")[0];
-    // 取第一个播放地址
-    let url = "";
-    if (playUrl) {
-      const parts = playUrl.split("#")[0].split("$");
-      url = parts.length > 1 ? parts[1] : parts[0];
+  async function play(id, name){
+    try{
+      const data = await request(API + "?ac=detail&ids=" + id);
+      let vod = (data.list && data.list[0]) || {};
+      // 兼容 videolist
+      if (!vod.vod_play_url){
+        const d2 = await request(API + "?ac=videolist&ids=" + id);
+        vod = (d2.list && d2.list[0]) || vod;
+      }
+      const from = (vod.vod_play_from || "").split("$$$");
+      const urls = (vod.vod_play_url || "").split("$$$");
+      let playUrl = "";
+      for (let i=0; i<urls.length; i++){
+        const eps = urls[i].split("#");
+        for (const ep of eps){
+          const p = ep.split("$");
+          if (p.length > 1 && p[1].indexOf("http") === 0){
+            playUrl = p[1];
+            break;
+          }
+        }
+        if (playUrl) break;
+      }
+      if (!playUrl){
+        alert("未找到播放地址");
+        return;
+      }
+      if (window.fm && fm.play){
+        fm.play({url: playUrl, title: name || vod.vod_name || ""});
+      } else if (window.fm && fm.vod && fm.vod.play){
+        fm.vod.play({url: playUrl, name: name || ""});
+      } else {
+        location.href = playUrl;
+      }
+    }catch(e){
+      alert("播放失败: " + (e.message || e));
     }
-    if (!url) {
-      alert("没有找到播放地址");
-      return;
-    }
-    // 优先用原生播放
-    if (window.fm && fm.play) {
-      fm.play({ url, title: vod.vod_name || "" });
-    } else if (window.fm && fm.vod && fm.vod.play) {
-      fm.vod.play({ url, name: vod.vod_name || "" });
-    } else {
-      // 降级：新窗口打开
-      location.href = url;
-    }
-  } catch (e) {
-    alert("获取播放地址失败: " + e.message);
   }
-}
 
-document.getElementById("more").onclick = () => loadList(false);
-loadClass().then(() => loadList(true));
+  $("more").onclick = function(){ loadList(false); };
+
+  loadClass().then(ok=>{
+    if (ok) loadList(true);
+  });
+})();
 </script>
 </body>
 </html>
