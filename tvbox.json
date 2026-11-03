@@ -1,25 +1,11 @@
 {
   "sites": [
     {
-      "key": "51md_js",
-      "name": "51麻豆[高天]",
+      "key": "csp_Nmys",
+      "name": "测试-农民影视[必有]",
       "type": 3,
-      "api": "https://raw.githubusercontent.com/gaotianliuyun/gao/master/lib/drpy2.min.js",
-      "ext": "https://raw.githubusercontent.com/gaotianliuyun/gao/master/js/51md.js",
-      "searchable": 1,
-      "quickSearch": 1
-    },
-    {
-      "key": "R18_all",
-      "name": "R18聚合[饭太硬]",
-      "type": 3,
-      "api": "https://raw.githubusercontent.com/FongMi/CatVodSpider/main/lib/drpy2.min.js",
-      "ext": "https://raw.githubusercontent.com/gaotianliuyun/gao/master/js/18av.json",
+      "api": "csp_Nmys",
       "searchable": 1
     }
-  ],
-  "parses": [],
-  "rules": [
-    {"host": "*","rule": ["m3u8","mp4"]}
   ]
 }
