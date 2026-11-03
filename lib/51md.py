@@ -1,31 +1,41 @@
 # -*- coding: utf-8 -*-
-# 51md.me - TVBox Python 爬虫版 By AVBOX
-# 适配 TVBox FongMi / qiaoji / Takagen99 Python版
-
-import re
-import requests
+# 51md.me 接口版 - 绕过CF验证
+import requests, re, json, sys
 from urllib.parse import quote
 
 class Spider:
     def __init__(self):
-        self.host = "https://51md.me"
+        # 51md的主站域名经常变，这里做个容灾列表
+        self.hosts = [
+            "https://51md.me",
+            "https://51md.cfd",
+            "https://51md.buzz",
+        ]
+        self.host = self.hosts[0]
         self.headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
-            "Referer": self.host + "/",
-            "Accept-Language": "zh-CN,zh;q=0.9"
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15",
+            "Referer": "https://51md.me/",
         }
         self.session = requests.Session()
+    
+    def init(self, extend=""):
+        if extend and extend.startswith('http'):
+            self.host = extend.rstrip('/')
+        # 自动找可用域名
+        for h in self.hosts:
+            try:
+                r = self.session.get(h, headers=self.headers, timeout=5)
+                if r.status_code == 200 and 'vod' in r.text:
+                    self.host = h
+                    break
+            except:
+                continue
+        return []
 
     def getName(self):
         return "51麻豆"
 
-    def init(self, extend=""):
-        if extend:
-            self.host = extend.rstrip('/')
-        return []
-
     def homeContent(self, filter):
-        # 分类写死，网站分类ID不变
         classes = [
             {"type_id": "1", "type_name": "麻豆原创"},
             {"type_id": "2", "type_name": "天美传媒"},
@@ -36,120 +46,117 @@ class Spider:
             {"type_id": "7", "type_name": "杏吧原创"},
             {"type_id": "8", "type_name": "糖心Vlog"},
         ]
-        # 首页推荐
-        try:
-            r = self.session.get(self.host, headers=self.headers, timeout=10)
-            r.encoding = 'utf-8'
-            html = r.text
-            # 解析 ul.vod-list li
-            pattern = r'<li.*?><a href="(/vod-detail/id/\d+\.html)" title="(.*?)".*?<img.*?data-original="(.*?)".*?<div class="text">(.*?)</div>'
-            vids = re.findall(pattern, html, re.S)
-            videos = []
-            for link, title, pic, remark in vids[:20]:
-                videos.append({
-                    "vod_id": link,
-                    "vod_name": title.strip(),
-                    "vod_pic": pic if pic.startswith('http') else self.host + pic,
-                    "vod_remarks": remark.strip()
-                })
-            return {"class": classes, "list": videos}
-        except Exception as e:
-            return {"class": classes, "list": []}
+        # 首页用分类1的最新数据做推荐，避免请求首页被CF拦
+        data = self.categoryContent("1", "1", {}, {})
+        return {"class": classes, "list": data.get("list", [])}
 
     def categoryContent(self, tid, pg, filter, extend):
-        url = f"{self.host}/vod-show/id/{tid}/page/{pg}.html"
-        try:
-            r = self.session.get(url, headers=self.headers, timeout=10)
-            r.encoding = 'utf-8'
-            html = r.text
-            pattern = r'<li.*?><a href="(/vod-detail/id/\d+\.html)" title="(.*?)".*?<img.*?data-original="(.*?)".*?<div class="text">(.*?)</div>'
-            vids = re.findall(pattern, html, re.S)
-            videos = []
-            for link, title, pic, remark in vids:
-                videos.append({
-                    "vod_id": link,
-                    "vod_name": title.strip(),
-                    "vod_pic": pic if pic.startswith('http') else self.host + pic,
-                    "vod_remarks": remark.strip()
-                })
-            # 判断有没有下一页
-            has_more = '下一页' in html or f'page/{int(pg)+1}' in html
-            return {"list": videos, "page": int(pg), "pagecount": 9999 if has_more else int(pg), "limit": 24, "total": 99999}
-        except:
-            return {"list": [], "page": int(pg)}
+        # 核心：走 /api.php/provide/vod/ 这个是MACCMS标准API，不走网页
+        apis = [
+            f"{self.host}/api.php/provide/vod/at/json?ac=list&t={tid}&pg={pg}&h=24",
+            f"{self.host}/api.php/provide/vod/?ac=list&t={tid}&pg={pg}",
+        ]
+        videos = []
+        for api_url in apis:
+            try:
+                r = self.session.get(api_url, headers=self.headers, timeout=10)
+                if r.status_code != 200:
+                    continue
+                # 有些返回的是JSONP
+                text = r.text.strip()
+                if text.startswith('{'):
+                    j = json.loads(text)
+                else:
+                    # 兼容网页版解析
+                    html = text
+                    pattern = r'href="(/vod-detail/id/\d+\.html)" title="(.*?)".*?data-original="(.*?)"'
+                    vids = re.findall(pattern, html, re.S)
+                    for link, title, pic in vids:
+                        videos.append({
+                            "vod_id": link,
+                            "vod_name": title,
+                            "vod_pic": pic if pic.startswith('http') else self.host+pic,
+                            "vod_remarks": "最新"
+                        })
+                    if videos:
+                        break
+                    continue
+
+                for item in j.get('list', []):
+                    videos.append({
+                        "vod_id": f"/vod-detail/id/{item.get('vod_id')}.html",
+                        "vod_name": item.get('vod_name'),
+                        "vod_pic": item.get('vod_pic'),
+                        "vod_remarks": item.get('vod_remarks') or item.get('vod_time')
+                    })
+                if videos:
+                    break
+            except Exception as e:
+                print(f"api error {api_url}: {e}", file=sys.stderr)
+                continue
+        
+        # 如果API也失败，降级爬网页
+        if not videos:
+            try:
+                url = f"{self.host}/vod-show/id/{tid}/page/{pg}.html"
+                r = self.session.get(url, headers=self.headers, timeout=10)
+                r.encoding='utf-8'
+                pattern = r'<a href="(/vod-detail/id/\d+\.html)" title="(.*?)".*?data-original="(.*?)"'
+                vids = re.findall(pattern, r.text, re.S)
+                for link, title, pic in vids:
+                    videos.append({
+                        "vod_id": link,
+                        "vod_name": title,
+                        "vod_pic": pic if pic.startswith('http') else self.host+pic,
+                        "vod_remarks": ""
+                    })
+            except:
+                pass
+
+        return {"list": videos, "page": int(pg), "pagecount": 99, "limit": 24, "total": 9999}
 
     def detailContent(self, array):
-        vid = array[0]  # /vod-detail/id/123.html
+        vid = array[0]
         url = self.host + vid if vid.startswith('/') else vid
         try:
             r = self.session.get(url, headers=self.headers, timeout=10)
-            r.encoding = 'utf-8'
             html = r.text
-            title = re.search(r'<h1.*?>(.*?)</h1>', html)
-            title = title.group(1).strip() if title else "51md"
-            pic = re.search(r'class="vod-img".*?data-original="(.*?)"', html, re.S)
-            pic = pic.group(1) if pic else ""
-            if pic and not pic.startswith('http'):
-                pic = self.host + pic
-            content = re.search(r'<div class="content">(.*?)</div>', html, re.S)
-            content = re.sub(r'<[^>]+>', '', content.group(1)).strip() if content else ""
-            
-            # 解析播放列表
-            # 这种站一般是 "url":"https://...m3u8" 藏在JS里
-            play_url = re.search(r'"url"\s*:\s*"(https[^"]+\.m3u8)"', html)
-            if play_url:
-                m3u8 = play_url.group(1).replace('\\/', '/').replace('\\', '')
+            m3u8 = ""
+            m = re.search(r'"url"\s*:\s*"(https[^"]+\.m3u8)"', html)
+            if m:
+                m3u8 = m.group(1).replace('\\/', '/')
             else:
-                # 备用，从 iframe 拿
-                iframe = re.search(r'<iframe.*?src="(.*?)"', html)
-                m3u8 = ""
-                if iframe:
-                    iframe_url = iframe.group(1)
-                    if not iframe_url.startswith('http'):
-                        iframe_url = self.host + iframe_url
-                    r2 = self.session.get(iframe_url, headers=self.headers, timeout=10)
-                    m2 = re.search(r'(https[^\s"\'<>]+\.m3u8)', r2.text)
-                    if m2:
-                        m3u8 = m2.group(1)
+                m2 = re.search(r'(https[^\s"\'<>]+\.m3u8)', html)
+                if m2:
+                    m3u8 = m2.group(1)
             
-            vod = {
+            title = re.search(r'<h1>(.*?)</h1>', html)
+            title = title.group(1) if title else "51md"
+            return {"list": [{
                 "vod_id": vid,
                 "vod_name": title,
-                "vod_pic": pic,
-                "vod_content": content,
-                "vod_play_from": "51麻豆",
-                "vod_play_url": f"正片${m3u8 if 'm3u8' in locals() else url}"
-            }
-            return {"list": [vod]}
-        except Exception as e:
+                "vod_play_from": "播放",
+                "vod_play_url": f"在线${m3u8 or url}"
+            }]}
+        except:
             return {"list": []}
 
     def searchContent(self, key, quick, pg="1"):
         url = f"{self.host}/vod-search/wd/{quote(key)}/page/{pg}.html"
-        return self.categoryContent("", pg, {}, {}) if False else self._search(url)
-
-    def _search(self, url):
         try:
             r = self.session.get(url, headers=self.headers, timeout=10)
-            r.encoding = 'utf-8'
-            html = r.text
-            pattern = r'<li.*?><a href="(/vod-detail/id/\d+\.html)" title="(.*?)".*?<img.*?data-original="(.*?)".*?<div class="text">(.*?)</div>'
-            vids = re.findall(pattern, html, re.S)
+            r.encoding='utf-8'
+            pattern = r'href="(/vod-detail/id/\d+\.html)" title="(.*?)".*?data-original="(.*?)"'
+            vids = re.findall(pattern, r.text, re.S)
             videos = []
-            for link, title, pic, remark in vids:
+            for link, title, pic in vids:
                 videos.append({
-                    "vod_id": link,
-                    "vod_name": title.strip(),
-                    "vod_pic": pic if pic.startswith('http') else self.host + pic,
-                    "vod_remarks": remark.strip()
+                    "vod_id": link, "vod_name": title,
+                    "vod_pic": pic if pic.startswith('http') else self.host+pic
                 })
-            return {"list": videos, "page": 1}
+            return {"list": videos, "page": int(pg)}
         except:
             return {"list": []}
 
     def playerContent(self, flag, id, vipFlags):
-        # id 就是 m3u8 链接
         return {"parse": 0, "url": id, "header": self.headers}
-
-    def localProxy(self, param):
-        return [200, "video/mp2t", "", ""]
